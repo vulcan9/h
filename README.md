@@ -1,7 +1,5 @@
 # H Library (JavaScript-Highlight)
 
-
-	* 
 	* 이름 : JavaScript-Highlight (H 라이브러리)
 	* Version : 1.0.3 (2015.03.15)
 	* (c) Dong-il Park(vulcanProject : http://vulcan9.tistory.com)
@@ -17,7 +15,7 @@
 	* 사용방법 : 별도 문서 (test.html)에 버튼 클릭 기능 구현부분 참고
 	* 		var h = new H();
 	* 		h.add() ...
-	* 
+
 # API 목록
 	* 
 #### properties
@@ -27,7 +25,7 @@
 	* onClick : Fuunction - mark 태그에 마우스가 Click 됬을때 콜백
 	* style : Object - mark 태그의 style 정의 객체
 	* className : String - mark 태그에 class를 지정
-	* 
+
 #### Function
 	* initialize : function(initObj) - initObj객체에 초기 설정값 지정
 	* add : function(dataObj) - 사용자 데이터(dataObj)와 함께 현재 선택 영역을 mark 표시에 추가
@@ -40,7 +38,6 @@
 	* getMarkTags : function(anchorID) - mark 태그 목록을 반환 (anchorID가 없으면 전체 목록을 반환)
 	* isMarkTag : function(node) - node가 mark 표시에 사용되는 태그인지 감별
 	* getText : function(anchorID) - anchorID로 지정된 mark 표시 구간의 text를 반환
-	* 
 
 # 참고 자료
 
