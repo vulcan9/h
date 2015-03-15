@@ -15,7 +15,7 @@
 	* 용도 : HTML 문서 텍스트 하이라이팅 
 	* 		(마우스 드래그한 선택 영역 데이터를 저장/복귀/표시)
 	* 
-	* 브라우져 지원 여부 : all browsers, except IE before version 9
+	* 브라우져 지원 여부 : all browsers, except IE before version 10
 	* 
 	* 사용방법 : 별도 문서 (test.html)에 버튼 클릭 기능 구현부분 참고
 	* 		var h = new H();
