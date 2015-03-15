@@ -1,4 +1,4 @@
-# JavaScript-Highlight (H Library)
+# H Library (JavaScript-Highlight)
 
 
 	* 
