@@ -17,7 +17,7 @@
 	* 		h.add() ...
 
 # API 목록
-	* 
+
 #### properties
 	* log : Boolean - consol창에 log 출력 여부
 	* onMouseOver : Fuunction - mark 태그에 마우스가 Over 됬을때 콜백
