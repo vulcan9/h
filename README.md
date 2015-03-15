@@ -1,6 +1,6 @@
 # H Library (JavaScript-Highlight)
 
-	* 이름 : JavaScript-Highlight (H 라이브러리)
+	* 이름 : H 라이브러리 (JavaScript-Highlight)
 	* Version : 1.0.3 (2015.03.15)
 	* (c) Dong-il Park(vulcanProject : http://vulcan9.tistory.com)
 	* 
