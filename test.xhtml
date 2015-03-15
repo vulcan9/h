@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+	<head>
+		<meta charset="utf-8" />
+		<title>Highlight Unit Test</title>
+
+		<!-- UnitTest -->
+		<link rel="stylesheet" href="./libs/qunit-1.12.0.css"/>
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		
+		<script src="./libs/jquery.1.10.2.js"></script>
+		<!--<script src="./libs/javascript-xpath-0.1.12.js"></script>-->
+		<script src="./js/h.js"></script>
+		
+		
+		<script>
+		
+			$(function(){
+				
+				// 브라우져 지원 (IE > 9)
+				// 초기화 설정
+				var config = {
+					// consol창에 log 출력 여부
+					log : false,
+					
+					// mark 태그에 적용될 style 객체 설정할때
+					style:{
+						//"border": "none",
+						//"border-radius":"0px",
+						"background-color":"green",
+						"color":"black"
+					},
+					
+					// mark 태그에 적용될 css 클래스이름 설정할때
+					//className : "highlight",
+					
+					// 이벤트 콜백
+					onmouseOver : onmouseOver,
+					onmouseOut : onmouseOut,
+					onclick : onclick,
+				};
+				var h = new H(config);
+				
+				//----------------------
+				// 이벤트 콜백
+				// 선택영역에 대하여 이벤트 처리함수를 정의하여 등록한다
+				//----------------------
+				
+				// 자신의 객체만 색상 적용할지 그룹 전체에 적용할지 여부
+				var _splitView = false;
+				var rollOverStyle = {
+						//"border": "1px solid rgba(0, 0, 0, 0.5)",
+						//"border-radius":"0px",
+						"background-color": "rgba(0, 0, 0, 0.2)",
+						"color":"#000000"
+				};
+				
+				function onmouseOver(anchorID, element){
+					// 현재 선택 하이라이트 색상 변경
+					var $markGroup = h.getMarkTags(anchorID);
+					var $mark = (_splitView) ? $(element) : $markGroup;
+					$mark.css(rollOverStyle);
+				}
+				
+				function onmouseOut(anchorID, element){
+					// 현재 선택 하이라이트 색상 변경
+					var $markGroup = h.getMarkTags(anchorID);
+					var $mark = (_splitView) ? $(element) : $markGroup;
+					$mark.css(h.style);
+				}
+				
+				function onclick(anchorID, element){
+					var text = h.getText(anchorID);
+					console.log("text : ", text);
+					
+					var option = $("#removeOption").is(":checked");
+					if(option){
+						// 클릭한 element의 mark group 선택표시 제거
+						onmouseOut(anchorID, element);
+						
+						// mark 제거
+						h.remove(anchorID);
+						//h.removeNode(element);
+					}
+				}
+				
+				///////////////////////////////
+				// API 사용
+				///////////////////////////////
+				
+				//----------------------
+				// ADD, REMOVE, REMOVEALL
+				//----------------------
+				
+				$("#addButton").on("click", function(){
+					//out("Passed addButton!" );
+					
+					// 사용자 임의의 데이터 전달
+					var obj = {
+							description:"페이지 링크", 
+							page:parseInt(Math.random()*10, 10)
+						};
+					h.add(obj);
+				});
+	
+				$("#removeButton").on("click", function(){
+					//out("Passed removeButton!" );
+					
+					var anchorID = $("#anchorIDValue").val();
+					h.remove(anchorID);
+				});
+	
+				$("#getTextButton").on("click", function(){
+					var anchorID = $("#anchorIDValue").val();
+					var text = h.getText(anchorID);
+					out("GET TEXT : ", text);
+				});
+				
+				$("#removeAllButton").on("click", function(){
+					//out("Passed removeAllButton!" );
+					
+					h.removeAll();
+				});
+				
+				//----------------------
+				// SAVE, RESTORE
+				//----------------------
+				
+				$("#saveButton").on("click", function(){
+					//out("Passed saveButton!" );
+					
+					var jsonString = h.save();
+					$("#saveData").val(jsonString);
+				});
+				
+				$("#restoreButton").on("click", function(){
+					//out("Passed restoreButton!" );
+					
+					var jsonString = $("#saveData").val();
+					h.restore(jsonString);
+				});
+
+				//----------------------
+				// XPath 테스트
+				//----------------------
+				
+				/*
+				$("body").on("mouseup", function(e){
+					
+					var selection = window.getSelection ();
+	                var target = selection.anchorNode;
+				
+					console.log("target : ", target);
+					if(!target) return;
+					
+					var xpath2 = h._dom2xpath(target);
+					console.log("xpath2 : ", xpath2);
+					
+					var elm2 = h._xpath2dom(xpath2);
+					console.log("elm2 : ", elm2);
+					if(target != elm2) alert("xpath 테스트2 : element 일치하지 않음");
+					
+					console.log("----------------------------");
+					
+				});
+				*/
+				
+				///////////////////////////////
+				// END
+				///////////////////////////////
+			});
+				
+		</script>
+	</head>
+
+	<body style="padding: 0px;margin: 0px;">
+		
+		<!--//////////////////////////////////////
+		// 컨트롤러
+		//////////////////////////////////////-->
+		
+		<div style="padding: 30px;position: fixed;background-color: #272b30;z-index: 100;">
+	
+			<div>
+				<h1>Highlight Unit Test</h1>
+				<h6 class="text-info">* 브라우저 : Chrome, Firefox, IE > 10 (IE는 일부 버그있음)</h6>
+		    	<h6 class="text-info">* 테스트 방법 및 API 사용 샘플은 하단의 "How to..." 내용 참고</h6>
+		    	<h6 class="text-info">* 테스트 포함 안된 주요 태그 목록 : image, map, area, iframe, embed, applet, audio, video, canvas, Object</h6>
+		    	<h6 class="text-info">* 순서 : 드래그 선택 -> add -> save -> removeAll -> restore</h6>
+		    	    	
+				<div style="padding: 0px; width: 810px;">
+					
+					<!-- text select test -->
+					<div style="display: inline-block;float: left;">
+						<input type="button" class="btn btn-default" value="add" id="addButton"/>
+						<input type="button" class="btn btn-default" value="save" id="saveButton"/>
+						<input type="button" class="btn btn-default" value="removeAll" id="removeAllButton"/>
+						<input type="button" class="btn btn-default" value="restore" id="restoreButton"/>
+					</div>
+					
+					<!-- prev/next load
+					<div style="display: inline-block; float: right;">
+						<input type="button" class="btn btn-default" value="prev" id="prevButton">
+						<input type="button" class="btn btn-default" value="next" id="nextButton">
+					</div>
+					-->
+					
+					<div style="display: inline-block; float: right;">
+						<input type="checkbox" id="removeOption"/>
+						<label for="removeOption" style="width: 100px;font-weight:normal;font-size:small;vertical-align: middle;">선택영역 <br/>클릭하여 지우기</label>
+						<input type="text" class="form-control" style="width: 150px;display:inline-block;"
+								placeholder="anchorID" id="anchorIDValue" onfocus="out(this.value='')"/>
+						<!--<input type="button" class="btn btn-default" value="dispose" id="disposeButton">-->
+						<input type="button" class="btn btn-default" value="remove" id="removeButton"/>
+						<input type="button" class="btn btn-default" value="get text" id="getTextButton"/>
+					</div>
+					
+				</div>
+				
+				<p style="clear:both;">
+		    		<h4>Save Result</h4>
+					<!--<h5 style="margin-top: 20px;display:block">save 요청 결과 데이터 : </h5>
+			    	<pre id="saveData" contenteditable="true" style="clear:both; overflow:auto;
+						width: 810px; height: 100px; padding: 0px;"></pre>-->
+					<textarea id="saveData" style="width: 810px; height: 100px; padding: 0px;"> </textarea>
+				</p>
+			</div>
+	    	
+		</div>
+		
+    	<!--공백-->
+		<div style="height: 350px;"> </div>
+		
+		<div style="padding: 30px;">
+		<!--본문 시작-->
+		
+			<!--
+			<br/>
+			<div>
+				<input type="button" class="btn btn-default" value="next Test" id="nextTextButton">
+			</div>
+			-->
+			
+			<!--//////////////////////////////////////
+			// UnitTest
+			//////////////////////////////////////-->
+			
+	    	<div><h4>Unit Test 자동화 리스트</h4></div>
+			<div id="sampleContainer" style="border: 1px dotted #FF0000;padding: 20px;width: 810px;"> </div>
+				
+			<br/>
+	    	<div><h4>Unit Test 자동화 결과</h4></div>
+			<div style="width: 810px; height: 100%; position:relative; border: 1px dotted #FF0000;padding: 20px">
+	
+				<div id="qunit"> </div>
+				<div id="qunit-fixture"> </div>
+				
+				<!-- qunit.js 수정
+					847라인 : &nbsp; 제거
+					1090라인 : 닫힘태그 왁인
+					1190 라인 에러 : 닫힘태그 왁인
+				-->
+				<script src="./libs/qunit-1.12.0.js"></script>
+				<script>
+					isTest = true;
+				</script>
+				
+				<script src="./unittest/test.js"></script>
+			</div>
+			
+			
+			
+			<!--//////////////////////////////////////
+			// How to
+			//////////////////////////////////////-->
+			
+			<br/>
+	    	<div><h4>How to...</h4></div>
+	    	
+	    	<ul>
+	    		<li><h6 class="text-info">[add] - 아래 Sample Page를 마우스 드래그한 후 add 버튼을 클릭하면 선택 영역이 기록된다.</h6></li>
+	    		<li><h6 class="text-info">[remove] - 선택된 텍스트영역을 클릭하여 콘솔창에서 anchorID를 확인한 후 텍스트박스에 입력하고 remove 버튼을 클릭한다.</h6></li>
+	    		<li><h6 class="text-info">[removeAll] - anchorID와 상관없이 모든 하이라이트 표시가 삭제된다.</h6></li>
+	    		
+	    		<li><h6 class="text-info">[save] - add 상태의 하이라이트 데이터가 텍스트박스에 표시된다.</h6></li>
+	    		<li><h6 class="text-info">[restore] - save 데이터를 얻은 후 removeAll 버튼 클릭한다. 이후 restore버튼을 클릭한다.
+	    		<br/>또는 save버튼 클릭으로 얻어진 데이터 복사 후 새로고침(F5)한 화면에서 텍스트박스에 그대로 복사한 후 restore버튼을 클릭
+	    		<br/>(텍스트박스에서 데이터를 읽어들임)</h6></li>
+	    		
+	    		<!--<li><h6 class="text-info">4. [dispose] - 페이지를 갱신(넘김)할때 호출하여 selection에 대한 메모리를 모두 비운다.</h6></li>-->
+	    	</ul>
+	    	
+			<!--//////////////////////////////////////
+			// Test Sample
+			//////////////////////////////////////-->
+			
+	    	<h4>Test Sample Page</h4>
+			<div contenteditable="true" style="clear:both; overflow: auto;
+				width: 810px; height: auto; border: 1px dotted #FF0000;padding: 20px;">
+				
+				
+				<!-- 샘플 데이터 //////////////////////////////////////////////////////-->
+				
+				
+				
+	
+	
+	
+	
+	<div><h3>[ 기타 요소들  테스트 ]</h3></div>
+	
+	<div><h4>[ Table - caption 테스트 ]</h4></div>
+	<table>
+		<caption>Monthly savings</caption>
+	  <colgroup>
+	    <col span="2" style="background-color:#353A41"/>
+	    <col style="background-color:#101112"/>
+	  </colgroup>
+	  <tr>
+	    <th>ISBN</th>
+	    <th>Title</th>
+	    <th>Price</th>
+	  </tr>
+	  <tr>
+	    <td>3476896</td>
+	    <td>My first HTML</td>
+	    <td>$53</td>
+	  </tr>
+	</table>
+	
+	
+	<div><h4>[ datalist 태그 테스트(hidden) ]</h4></div>
+	<datalist id="browsers">
+	  <option value="Internet Explorer"> </option>
+	  <option value="Firefox"> </option>
+	  <option value="Chrome"> </option>
+	  <option value="Opera"> </option>
+	  <option value="Safari"> </option>
+	</datalist>
+	
+	<div><h4>[ dd-dl-dt 태그 테스트 ]</h4></div>
+	<dl>
+	  <dt>Coffee</dt>
+	    <dd>Black hot drink</dd>
+	  <dt>Milk</dt>
+	    <dd>White cold drink</dd>
+	</dl>
+	
+	<div><h4>[ ol-li, ul-li 태그 테스트 ]</h4></div>
+	<ol>
+	  <li>Coffee</li>
+	  <li>Tea</li>
+	  <li>Milk</li>
+	</ol>
+	
+	<ul>
+	  <li>Coffee</li>
+	  <li>Tea</li>
+	  <li>Milk</li>
+	</ul>
+
+	
+	
+	
+				<div><h3>[ 일반 문서 테스트 ]</h3></div>
+				<p>
+					<b>Association football</b> is a sport played between two teams. It is usually called <b>football</b>, but in
+					some countries, such as the United States, it is called <b>soccer</b>. In <a href="http://simple.wikipedia.org/wiki/Japan">Japan</a>, New Zealand, South Africa, Australia, Canada and
+					Republic of Ireland, both words are commonly used.
+				</p>
+				<p>
+					Each team has <span style="font-weight: bold; font-style: italic">11 players</span> on the field. One of these players is the <i>goalkeeper</i>, and the other ten are
+					known as <i>"outfield players."</i> The game is played by <b>kicking a ball into the opponent's goal</b>. A
+					match has 90 minutes of play, with a break of 15 minutes in the middle. The break in the middle is called
+					half-time.
+				</p>
+				<blockquote>For 50 years, WWF has been protecting the future of nature. The world leading conservation organization, WWF works in 100 countries
+					and is supported by 1.2 million members in the United States and close to 
+					5 million globally.</blockquote>
+				<h2>Competitions</h2>
+				<p>
+					There are many competitions for football, for both football clubs and countries. Football clubs usually play
+					other teams in their own country, with a few exceptions. <b>Cardiff City F.C.</b> from Wales for example, play
+					in the English leagues and in the English FA Cup.
+				</p>
+				<h2>Who plays football</h2>
+				<pre>Football is the world's most popular sport. It is played in more
+	countries than any other game. In fact, FIFA (the Federation
+	Internationale de Football Association) has more members than the
+	United Nations.
+	
+	It is played by both males and females.
+	
+	
+	</pre>			
+	
+	
+				<p class="small">
+					Text adapted from <a href="http://simple.wikipedia.org/wiki/Association_football">Simple Wikipedia page on
+					Association Football</a>, licensed under the <a href="http://simple.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative
+					Commons Attribution/Share-Alike License</a>.
+				</p>
+	
+	
+				
+				
+				
+				
+				<!-- 샘플 데이터 끝 //////////////////////////////////////////////////////-->
+			</div>
+			
+		<!--본문 끝-->
+		</div>
+		
+	</body>
+</html>
